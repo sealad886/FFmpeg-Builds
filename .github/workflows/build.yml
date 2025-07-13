@@ -124,7 +124,7 @@ jobs:
     name: Build target base image
     if: ${{ github.event.inputs.buildOnly != 'true' }}
     needs: build_base
-    runs-on: ubuntu-latest
+    runs-on: ${{ contains(matrix.target, 'darwin') && 'macos-latest' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -179,7 +179,7 @@ jobs:
     name: Build target-variant image
     if: ${{ github.event.inputs.buildOnly != 'true' }}
     needs: build_target_bases
-    runs-on: ubuntu-latest
+    runs-on: ${{ contains(matrix.target, 'darwin') && 'macos-latest' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -257,7 +257,7 @@ jobs:
     name: Build ffmpeg
     if: ${{ ( github.event.inputs.buildOnly == 'true' && !cancelled() ) || success() }}
     needs: build_targets
-    runs-on: ubuntu-latest
+    runs-on: ${{ contains(matrix.target, 'darwin') && 'macos-latest' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
