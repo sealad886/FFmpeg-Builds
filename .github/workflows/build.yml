@@ -128,7 +128,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [win32,win64,winarm64,linux64,linuxarm64]
+        target: [win32,win64,winarm64,linux64,linuxarm64,darwin-arm64,darwin-x86_64]
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
@@ -194,6 +194,10 @@ jobs:
             variant: gpl
           - target: linuxarm64
             variant: gpl 7.1
+          - target: darwin-arm64
+            variant: gpl
+          - target: darwin-x86_64
+            variant: gpl
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
@@ -268,6 +272,10 @@ jobs:
             variant: gpl
           - target: linuxarm64
             variant: gpl 7.1
+          - target: darwin-arm64
+            variant: gpl
+          - target: darwin-x86_64
+            variant: gpl
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
@@ -282,6 +290,28 @@ jobs:
       - name: Build ffmpeg
         run: |
           T="$(echo -n ${{ github.token }} | sha256sum | head -c 64)" && echo -e "::add-mask::${T}\n::stop-commands::${T}"
+      # Lipo Merge and Validation for macOS Universal Binaries
+      - name: Validate and Merge Architectures (macOS Only)
+        if: ${{ contains(matrix.target, 'darwin') }}
+        run: |
+          set -ex
+          # Check architecture specific binaries exist
+          if [ "${{ matrix.target }}" = "darwin-arm64" ]; then
+            arm_arch_binary="artifacts/macOS-arm64/ffmpeg"
+            lipo -arch arm64 $arm_arch_binary -verify
+            arm_exists=$?
+          elif [ "${{ matrix.target }}" = "darwin-x86_64" ]; then
+            x64_arch_binary="artifacts/macOS-x86_64/ffmpeg"
+            lipo -arch x86_64 $x64_arch_binary -verify
+            x64_exists=$?
+          fi
+          # Generate Universal2 binary
+          if [ $arm_exists -eq 0 -a $x64_exists -eq 0 ]; then
+            lipo -create -output artifacts/ffmpeg $arm_arch_binary $x64_arch_binary
+            lipo -info artifacts/ffmpeg
+            file artifacts/ffmpeg
+          fi
+
           ./build.sh ${{ matrix.target }} ${{ matrix.variant }}
       - name: Replace spaces in string
         id: strs
