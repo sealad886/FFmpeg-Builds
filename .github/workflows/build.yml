@@ -52,7 +52,14 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Free Disk-Space
-        run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            df -h && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+          elif [[ "$RUNNER_OS" == "Windows" ]]; then
+            df -h
+          fi
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install buildx
@@ -131,7 +138,14 @@ jobs:
         target: [win32,win64,winarm64,linux64,linuxarm64,darwin-arm64,darwin-x86_64]
     steps:
       - name: Free Disk-Space
-        run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            df -h && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+          elif [[ "$RUNNER_OS" == "Windows" ]]; then
+            df -h
+          fi
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install buildx
@@ -200,7 +214,14 @@ jobs:
             variant: gpl
     steps:
       - name: Free Disk-Space
-        run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            df -h && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+          elif [[ "$RUNNER_OS" == "Windows" ]]; then
+            df -h
+          fi
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install buildx
@@ -278,7 +299,14 @@ jobs:
             variant: gpl
     steps:
       - name: Free Disk-Space
-        run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            df -h && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
+          elif [[ "$RUNNER_OS" == "Windows" ]]; then
+            df -h
+          fi
       - name: Checkout
         uses: actions/checkout@v4
       - name: Login to Docker
